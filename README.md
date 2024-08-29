@@ -5,7 +5,7 @@
 ### Installation
 
 ```sh
-composer require saleh7/php-zatca-xml
+composer require hmmdlthf/php-zatca-xml
 ```
 
 ### Validation XML
