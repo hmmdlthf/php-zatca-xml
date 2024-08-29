@@ -20,7 +20,7 @@ class Invoice implements XmlSerializable
     private $invoiceCurrencyCode = 'SAR';
     private $taxCurrencyCode = 'SAR';
     private $orderReference;
-    private $billingReference;
+    private $billingReferences;
     private $contract;
     private $additionalDocumentReferences;
     private $accountingSupplierParty;
@@ -32,6 +32,7 @@ class Invoice implements XmlSerializable
     private $legalMonetaryTotal;
     private $invoiceLines;
     private $signature;
+    private $documentCurrencyCode;
 
     /**
      * @param UBLExtensions $UBLExtensions
@@ -121,12 +122,12 @@ class Invoice implements XmlSerializable
     }
 
     /**
-     * @param BillingReference $billingReference
-     * @return BillingReference
+     * @param BillingReference[] $billingReference
+     * @return Invoice
      */
-    public function setBillingReference(BillingReference $billingReference): Invoice
+    public function setBillingReferences(array $billingReferences): Invoice
     {
-        $this->billingReference = $billingReference;
+        $this->billingReferences = $billingReferences;
         return $this;
     }
 
@@ -359,10 +360,14 @@ class Invoice implements XmlSerializable
          if ($this->orderReference != null) {
              $writer->write( [ Schema::CAC . 'OrderReference' => $this->orderReference ] );
          }
-          // BillingReference
-         if ($this->billingReference != null) {
-             $writer->write( [ Schema::CAC . 'BillingReference' => $this->billingReference ] );
-         }
+         // BillingReference
+         if($this->billingReferences !== null) {
+            foreach ($this->billingReferences as $billingReference) {
+                $writer->write([
+                    Schema::CAC . 'BillingReference' => $billingReference
+                ]);
+            }
+        }
           // ContractDocumentReference
          if ($this->contract !== null) {
              $writer->write([

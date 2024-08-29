@@ -37,8 +37,10 @@ class TaxCategory implements XmlSerializable
         if ($this->getPercent() !== null) {
             if ($this->getPercent() >= 15) {
                 return 'S';
-            } elseif ($this->getPercent() <= 15 && $this->getPercent() >= 6) {
+            } else if ($this->getPercent() < 15 && $this->getPercent() >= 6) {
                 return 'AA';
+            } else if ($this->getPercent() < 6 && $this->getPercent() >= 1) {
+                return 'AA'; // TODO - find the value for these range of percentages
             } else {
                 return 'Z';
             }

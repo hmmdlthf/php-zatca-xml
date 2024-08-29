@@ -8,6 +8,7 @@ class Price implements XmlSerializable
 {
     private $priceAmount;
     private $baseQuantity;
+    private $allowanceCharges;
     private $unitCode = UnitCode::UNIT;
 
     /**
@@ -42,6 +43,24 @@ class Price implements XmlSerializable
     }
 
     /**
+     * @return AllowanceCharge[]
+     */
+    public function getAllowanceCharges(): ?array
+    {
+        return $this->allowanceCharges;
+    }
+
+    /**
+     * @param AllowanceCharge[] $allowanceCharges
+     * @return Price
+     */
+    public function setAllowanceCharges(?array $allowanceCharges): Price
+    {
+        $this->allowanceCharges = $allowanceCharges;
+        return $this;
+    }
+
+    /**
      * The xmlSerialize method is called during xml writing.
      *
      * @param Writer $writer
@@ -52,7 +71,7 @@ class Price implements XmlSerializable
         $writer->write([
             [
                 'name' => Schema::CBC . 'PriceAmount',
-                'value' => number_format($this->priceAmount, 2, '.', ''),
+                'value' => number_format($this->priceAmount, 4, '.', ''),
                 'attributes' => [
                     'currencyID' => GeneratorInvoice::$currencyID
                 ]
@@ -62,12 +81,20 @@ class Price implements XmlSerializable
             $writer->write(
                 [
                     'name' => Schema::CBC . 'BaseQuantity',
-                    'value' => number_format($this->baseQuantity, 2, '.', ''),
+                    'value' => number_format($this->baseQuantity, 4, '.', ''),
                     'attributes' => [
                         'unitCode' => $this->unitCode
                     ]
                 ]
             );
+        }
+        // AllowanceCharge
+        if ($this->allowanceCharges !== null) {
+            foreach ($this->allowanceCharges as $allowanceCharge) {
+                $writer->write([
+                    Schema::CAC . 'AllowanceCharge' => $allowanceCharge
+                ]);
+            }
         }
     }
 }

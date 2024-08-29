@@ -8,7 +8,7 @@ class InvoiceType implements XmlSerializable
 {
     private $invoice;
     private $invoiceType;
-
+    private $isExportInvoice = false;
 
     /**
      * @param mixed $invoiceType
@@ -27,6 +27,16 @@ class InvoiceType implements XmlSerializable
     public function setInvoiceType(?string $invoiceType): InvoiceType
     {
         $this->invoiceType = $invoiceType;
+        return $this;
+    }
+
+    /**
+     * @param bool $isExportInvoice
+     * @return InvoiceType
+     */
+    public function setIsExportInvoice(?bool $isExportInvoice): InvoiceType
+    {
+        $this->isExportInvoice = $isExportInvoice;
         return $this;
     }
 
@@ -55,6 +65,11 @@ class InvoiceType implements XmlSerializable
             }elseif ($this->invoiceType == 'Credit') {
                 $invoiceType = InvoiceTypeCode::TAX_CREDIT_NOTE;
             }
+
+            if ($this->isExportInvoice) {
+                $invoiceType = substr($invoiceType, 0, 4) . ((int)$invoiceType[4] + 1) . substr($invoiceType, 5);
+            }
+            
             $writer->write([
                 [
                     "name" => Schema::CBC . 'InvoiceTypeCode',
@@ -74,6 +89,11 @@ class InvoiceType implements XmlSerializable
             }elseif ($this->invoiceType == 'Credit') {
                 $invoiceType = InvoiceTypeCode::SIMPLIFIED_CREDIT_NOTE;
             }
+
+            if ($this->isExportInvoice) {
+                $invoiceType = substr($invoiceType, 0, 4) . ((int)$invoiceType[4] + 1) . substr($invoiceType, 5);
+            }
+
             $writer->write([
                 [
                     "name" => Schema::CBC . 'InvoiceTypeCode',

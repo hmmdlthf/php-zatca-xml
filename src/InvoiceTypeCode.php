@@ -14,4 +14,6 @@ class InvoiceTypeCode
     const CREDIT_NOTE = 381; // Credit note
     const TAX_CREDIT_NOTE = '0100000'; // For tax invoice credit note, code is 381 and subtype is 01.
     const SIMPLIFIED_CREDIT_NOTE = '0200000'; // For simplified credit note, code is 381 and subtype is 02.
+
+    const INVOICE_PREPAYMENT = 386;
 }

@@ -9,6 +9,7 @@ class InvoiceLine implements XmlSerializable
     private $id;
     private $invoicedQuantity;
     private $lineExtensionAmount;
+    private $allowanceCharges;
     private $unitCode = 'MON';
     private $taxTotal;
     private $invoicePeriod;
@@ -17,6 +18,7 @@ class InvoiceLine implements XmlSerializable
     private $price;
     private $accountingCostCode;
     private $accountingCost;
+    private $documentReference; // only used in advanced payment senario
 
     /**
      * @return string
@@ -87,6 +89,24 @@ class InvoiceLine implements XmlSerializable
     public function setTaxTotal(?TaxTotal $taxTotal): InvoiceLine
     {
         $this->taxTotal = $taxTotal;
+        return $this;
+    }
+
+    /**
+     * @return AllowanceCharge[]
+     */
+    public function getAllowanceCharges(): ?array
+    {
+        return $this->allowanceCharges;
+    }
+
+    /**
+     * @param AllowanceCharge[] $allowanceCharges
+     * @return InvoiceLine
+     */
+    public function setAllowanceCharges(?array $allowanceCharges): InvoiceLine
+    {
+        $this->allowanceCharges = $allowanceCharges;
         return $this;
     }
 
@@ -217,6 +237,24 @@ class InvoiceLine implements XmlSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getDocumentReference(): ?DocumentReference
+    {
+        return $this->documentReference;
+    }
+
+    /**
+     * @param string $accountingCost
+     * @return InvoiceLine
+     */
+    public function setDocumentReference(?DocumentReference $documentReference): InvoiceLine
+    {
+        $this->documentReference = $documentReference;
+        return $this;
+    }
+
+    /**
      * The xmlSerialize method is called during xml writing.
      * @param Writer $writer
      * @return void
@@ -249,6 +287,19 @@ class InvoiceLine implements XmlSerializable
                 ]
             ]
         ]);
+        // AllowanceCharge
+        if ($this->allowanceCharges !== null) {
+            foreach ($this->allowanceCharges as $allowanceCharge) {
+                $writer->write([
+                    Schema::CAC . 'AllowanceCharge' => $allowanceCharge
+                ]);
+            }
+        }
+        if ($this->documentReference !== null) {
+            $writer->write([
+                Schema::CAC . 'DocumentReference' => $this->documentReference
+            ]);
+        }
         if ($this->accountingCostCode !== null) {
             $writer->write([
                 Schema::CBC . 'AccountingCostCode' => $this->accountingCostCode
@@ -269,6 +320,7 @@ class InvoiceLine implements XmlSerializable
                 Schema::CAC . 'TaxTotal' => $this->taxTotal
             ]);
         }
+        
         $writer->write([
             Schema::CAC . 'Item' => $this->item,
         ]);
